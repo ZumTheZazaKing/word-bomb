@@ -1,12 +1,17 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
+
+const Home = lazy(() => import('./pages/Home').then(module => ({default:module.Home})))
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <h1>Hello World</h1>
+    <Router>
+      <Suspense fallback={<h1>Loading...</h1>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Suspense>
+    </Router>
   )
 }
 
