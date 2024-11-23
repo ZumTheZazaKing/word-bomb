@@ -1,16 +1,51 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { lazy, Suspense } from 'react'
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import { lazy, Suspense, useMemo, useReducer } from 'react'
+import Loader from './components/Loader'
+import { Context } from './Context'
 
 const Home = lazy(() => import('./pages/Home').then(module => ({default:module.Home})))
+const Game = lazy(() => import('./pages/Game').then(module => ({default:module.Game})))
 
 function App() {
+
+  const initalGameState = {
+    score: 0,
+    start:false,
+    state:"Starting"
+  }
+
+  const reducer = (state,action) => {
+    switch(action.type){
+      case 'start_game':
+        return {...state, start:true, state:"Ongoing"}
+      
+      case 'end_game':
+        return {...state, start:false, state:"End"}
+      
+      case 'exit_game':
+        return {...state, state:"Starting"}
+      
+      default:
+        return state
+    }
+  }
+
+  const [state, dispatch] = useReducer(reducer, initalGameState)
+
+  const memo = useMemo(() => ({
+    state, dispatch
+  }),[state])
+
   return (
     <Router>
-      <Suspense fallback={<h1>Loading...</h1>}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </Suspense>
+      <Context.Provider value={memo}>
+        <Suspense fallback={<Loader/>}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/game" element={<Game />} />
+          </Routes>
+        </Suspense>
+      </Context.Provider>
     </Router>
   )
 }
