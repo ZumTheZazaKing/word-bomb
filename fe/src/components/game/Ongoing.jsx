@@ -43,6 +43,23 @@ const Ongoing  = () => {
         });
     };
 
+    const submitInput = () => {
+        console.log("Hello")
+    }
+    (function(){
+        var shouldHandleKeyDown = true;
+        document.onkeydown = function(e){
+          if (!shouldHandleKeyDown) return;
+          shouldHandleKeyDown = false;
+
+          if(e.key !== "Enter")return
+          submitInput()
+        }
+        document.onkeyup = function(){
+          shouldHandleKeyDown = true;
+        }
+    })();
+
     return (
         <div onClick={focusInput} className="w-screen h-screen flex flex-col gap-6 items-center justify-center">
             <div className="text-center space-y-2">
