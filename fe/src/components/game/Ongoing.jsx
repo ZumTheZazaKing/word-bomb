@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from "react";
+import getGroqChatCompletion from "../../hooks/getGroqChatCompletion";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 
 const Ongoing  = () => {
-
     const [countdown,setCountdown] = useState(5)
-    const [prompt, setPrompt] = useState("TES")
+    const [prompt, setPrompt] = useState("")
     const [input, setInput] = useState("")
 
     const inputRef = useRef(null)
 
     useEffect(() => {
         focusInput()
+        getPrompt()
     },[])
 
     useEffect(() => {
@@ -18,6 +21,13 @@ const Ongoing  = () => {
             setCountdown(c => c-1)
         },1000)
     },[countdown])
+
+    const getPrompt = async() => {
+        setPrompt("")
+        const res = await getGroqChatCompletion();
+        const prompt = res.choices[0]?.message?.content.replace(/\s/g, '').replace(/[^\w\s]/gi, '').replace(/[\s~`!@#$%^&*(){}\[\];:"'<,.>?\/\\|_+=-]/g, '')
+        setPrompt(prompt)
+    }
 
     const handleInputChange = e => {
         setInput(e.target.value.toUpperCase())
@@ -28,23 +38,36 @@ const Ongoing  = () => {
     }
 
     const getHighlightedText = () => {
-        let remainingPrompt = prompt;
-        return input.split("").map((letter, i) => {
-          const isMatch = remainingPrompt.startsWith(letter);
-          if (isMatch) {
-            remainingPrompt = remainingPrompt.slice(1); // Remove matched letter
-            return (
-              <span key={i} className="text-green-400">
-                {letter}
-              </span>
-            );
+        const inputArr = input.split("");
+        const promptArr = prompt.split("");
+    
+        let matchStartIndex = -1; // Tracks the starting index of a match
+        let matchIndex = 0; // Tracks the current position in `prompt`
+    
+        return inputArr.map((letter, i) => {
+          if (matchIndex < promptArr.length && letter === promptArr[matchIndex]) {
+            if (matchStartIndex === -1) matchStartIndex = i; // Start match
+            matchIndex++;
+          } else if (matchIndex > 0 && letter !== promptArr[matchIndex]) {
+            // Reset match if interrupted
+            matchStartIndex = -1;
+            matchIndex = 0;
           }
-          return <span key={i}>{letter}</span>;
+    
+          // Highlight only if it's part of a valid contiguous match
+          const isHighlighted = i >= matchStartIndex && i < matchStartIndex + matchIndex;
+    
+          return (
+            <span key={i} className={isHighlighted ? "text-green-500" : ""}>
+              {letter}
+            </span>
+          );
         });
     };
 
     const submitInput = () => {
-        console.log("Hello")
+        setInput("")
+        getPrompt()
     }
     (function(){
         var shouldHandleKeyDown = true;
@@ -64,7 +87,9 @@ const Ongoing  = () => {
         <div onClick={focusInput} className="w-screen h-screen flex flex-col gap-6 items-center justify-center">
             <div className="text-center space-y-2">
                 <p className="text-white font-semibold text-4xl">{countdown}</p>
-                <div className="text-white font-semibold text-3xl uppercase tracking-wider">{prompt}</div>
+                <div className="text-white h-[36px] font-semibold text-3xl uppercase tracking-wider flex items-center justify-center">
+                    {prompt ? prompt : <span className="animate-spin"><AiOutlineLoading3Quarters/></span>}
+                </div>
             </div>
             <p className="w-screen bg-transparent font-semibold tracking-wide outline-none text-center text-white text-2xl uppercase">
                 {getHighlightedText()}
@@ -75,7 +100,7 @@ const Ongoing  = () => {
                     ref={inputRef}
                     value={input}
                     onChange={e => handleInputChange(e)}
-                    className="h-0 w-0 w-screen bg-transparent font-semibold tracking-wide outline-none text-center text-white text-2xl"
+                    className="h-0 w-0 bg-transparent font-semibold tracking-wide outline-none text-center text-white text-2xl"
                 />
             </div>
         </div>
