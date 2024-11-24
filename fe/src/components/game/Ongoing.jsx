@@ -11,6 +11,7 @@ const Ongoing = (props) => {
     const [input, setInput] = useState("")
 
     const inputRef = useRef(null)
+    const displayRef = useRef(null)
 
     useEffect(() => {
         focusInput()
@@ -66,7 +67,15 @@ const Ongoing = (props) => {
     };
 
     const submitInput = () => {
-        if(!wordExists(input))return
+        if(!wordExists(input)){
+            console.log("Nope")
+            console.log(displayRef.current)
+            displayRef.current.classList.add('animate-shake')
+            setTimeout(() => {
+                displayRef.current.classList.remove('animate-shake')
+            },200)
+            return
+        }
         setInput("")
         getPrompt()
     }
@@ -92,7 +101,10 @@ const Ongoing = (props) => {
                     {prompt ? prompt : <span className="animate-spin"><AiOutlineLoading3Quarters/></span>}
                 </div>
             </div>
-            <p className="w-screen bg-transparent font-semibold tracking-wide outline-none text-center text-white text-2xl uppercase line-clamp-1">
+            <p 
+                ref={displayRef}
+                className="w-screen bg-transparent font-semibold tracking-wide outline-none text-center text-white text-2xl uppercase line-clamp-1"
+            >
                 {getHighlightedText()}
             </p>
             <div className="absolute bottom-0 p-4 bg-[rgba(0,0,0,0.3)] w-screen text-center">

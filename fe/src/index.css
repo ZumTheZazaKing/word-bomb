@@ -8,8 +8,13 @@
   box-sizing: border-box;
 }
 
-body{
-  background-color: #52473F;
+html,
+body {
+  overflow: hidden;
+}
+
+body {
+  background-color: #52473f;
 }
 
 .vignette {
@@ -18,6 +23,6 @@ body{
   left: 0;
   width: 100%;
   height: 100%;
-  box-shadow: 0 0 200px rgba(0,0,0,0.4) inset;
+  box-shadow: 0 0 200px rgba(0, 0, 0, 0.4) inset;
   pointer-events: none;
 }
