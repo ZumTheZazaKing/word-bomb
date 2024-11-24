@@ -1,9 +1,11 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
-import getGroqChatCompletion from "../../hooks/getGroqChatCompletion";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import wordExists from 'word-exists'
 
+const Ongoing = (props) => {
+    const { prompts } = props
 
-const Ongoing  = () => {
     const [countdown,setCountdown] = useState(5)
     const [prompt, setPrompt] = useState("")
     const [input, setInput] = useState("")
@@ -22,10 +24,8 @@ const Ongoing  = () => {
         },1000)
     },[countdown])
 
-    const getPrompt = async() => {
-        setPrompt("")
-        const res = await getGroqChatCompletion();
-        const prompt = res.choices[0]?.message?.content.replace(/\s/g, '').replace(/[^\w\s]/gi, '').replace(/[\s~`!@#$%^&*(){}\[\];:"'<,.>?\/\\|_+=-]/g, '')
+    const getPrompt = () => {
+        const prompt = prompts[Math.floor(Math.random() * prompts.length)]
         setPrompt(prompt)
     }
 
@@ -66,11 +66,12 @@ const Ongoing  = () => {
     };
 
     const submitInput = () => {
+        if(!wordExists(input))return
         setInput("")
         getPrompt()
     }
     (function(){
-        var shouldHandleKeyDown = true;
+        let shouldHandleKeyDown = true;
         document.onkeydown = function(e){
           if (!shouldHandleKeyDown) return;
           shouldHandleKeyDown = false;

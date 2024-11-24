@@ -11,11 +11,17 @@ function App() {
   const initalGameState = {
     score: 0,
     start:false,
-    state:"Starting"
+    state:"Waiting"
   }
 
   const reducer = (state,action) => {
     switch(action.type){
+      case 'fetch_prompts':
+        return {...state, state: "Fetching"}
+      
+      case 'enter_game':
+        return {...state, state: "Starting"}
+
       case 'start_game':
         return {...state, start:true, state:"Ongoing"}
       
@@ -23,7 +29,7 @@ function App() {
         return {...state, start:false, state:"End"}
       
       case 'exit_game':
-        return {...state, state:"Starting"}
+        return {...state, state:"Waiting"}
       
       default:
         return state
