@@ -22,7 +22,10 @@ const Ongoing = (props) => {
 
     useEffect(() => {
         const timer = setInterval(() => {
-          setCountdown((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
+          setCountdown((prevTime) => {
+            if(prevTime <= 1)dispatch({type:"end_game"})
+            return prevTime > 0 ? prevTime - 1 : 0
+          });
         }, 1000);
     
         return () => clearInterval(timer); // Cleanup on unmount

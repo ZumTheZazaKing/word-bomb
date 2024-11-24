@@ -17,7 +17,7 @@ export const Home = () => {
             <h1 className="text-2xl text-white font-bold">Word Bomb 💣</h1>
             <div>
                 <button 
-                    className="px-4 py-1 bg-green-500 text-lg rounded hover:bg-green-600 cursor-pointer transition-colors"
+                    className="px-4 py-1 bg-green-500 text-white text-lg rounded hover:bg-green-600 cursor-pointer transition-colors"
                     onClick={play}
                 >    
                     Play

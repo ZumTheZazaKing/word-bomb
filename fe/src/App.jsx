@@ -29,7 +29,10 @@ function App() {
         return {...state, start:false, state:"End"}
       
       case 'exit_game':
-        return {...state, state:"Waiting"}
+        return {...state, state:"Waiting", score:0}
+        
+      case 'play_again':
+          return {...state, state:"Fetching", score:0}
       
       case 'add_score':
         return {...state, score: state.score + action.payload}
