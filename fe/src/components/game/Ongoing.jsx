@@ -11,6 +11,7 @@ const Ongoing = (props) => {
     const [countdown,setCountdown] = useState(10)
     const [prompt, setPrompt] = useState("")
     const [input, setInput] = useState("")
+    const [used, setUsed] = useState([])
 
     const inputRef = useRef(null)
     const displayRef = useRef(null)
@@ -87,8 +88,10 @@ const Ongoing = (props) => {
     const submitInput = () => {
         if(!wordExists(input))return shakeInput()
         if(!input.includes(prompt))return shakeInput()
+        if(used.includes(input))return shakeInput()
         dispatch({type:"add_score", payload:1})
-
+        
+        setUsed(u => [...u,input])
         addTime(3)
 
         setInput("")

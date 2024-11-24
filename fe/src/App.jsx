@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import { MemoryRouter as Router, Routes, Route } from 'react-router-dom'
 import { lazy, Suspense, useMemo, useReducer } from 'react'
 import Loader from './components/Loader'
 import { Context } from './Context'
