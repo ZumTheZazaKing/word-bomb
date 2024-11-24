@@ -31,6 +31,9 @@ function App() {
       case 'exit_game':
         return {...state, state:"Waiting"}
       
+      case 'add_score':
+        return {...state, score: state.score + action.payload}
+      
       default:
         return state
     }

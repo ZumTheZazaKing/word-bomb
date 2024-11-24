@@ -1,12 +1,14 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import wordExists from 'word-exists'
+import { Context } from "../../Context";
 
 const Ongoing = (props) => {
     const { prompts } = props
+    const { state, dispatch } = useContext(Context)
 
-    const [countdown,setCountdown] = useState(5)
+    const [countdown,setCountdown] = useState(10)
     const [prompt, setPrompt] = useState("")
     const [input, setInput] = useState("")
 
@@ -19,11 +21,17 @@ const Ongoing = (props) => {
     },[])
 
     useEffect(() => {
-        if(countdown <= 0)return
-        setTimeout(() => {
-            setCountdown(c => c-1)
-        },1000)
-    },[countdown])
+        const timer = setInterval(() => {
+          setCountdown((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
+        }, 1000);
+    
+        return () => clearInterval(timer); // Cleanup on unmount
+    }, []);
+    
+    const addTime = (seconds) => {
+        setCountdown((prevTime) => prevTime + seconds);
+    };
+    
 
     const getPrompt = () => {
         const prompt = prompts[Math.floor(Math.random() * prompts.length)]
@@ -66,16 +74,20 @@ const Ongoing = (props) => {
         });
     };
 
+    const shakeInput = () => {
+        displayRef.current.classList.add('animate-shake')
+        setTimeout(() => {
+            displayRef.current.classList.remove('animate-shake')
+        },200)
+    }
+
     const submitInput = () => {
-        if(!wordExists(input)){
-            console.log("Nope")
-            console.log(displayRef.current)
-            displayRef.current.classList.add('animate-shake')
-            setTimeout(() => {
-                displayRef.current.classList.remove('animate-shake')
-            },200)
-            return
-        }
+        if(!wordExists(input))return shakeInput()
+        if(!input.includes(prompt))return shakeInput()
+        dispatch({type:"add_score", payload:1})
+
+        addTime(3)
+
         setInput("")
         getPrompt()
     }
@@ -95,6 +107,11 @@ const Ongoing = (props) => {
 
     return (
         <div onClick={focusInput} className="w-screen h-screen flex flex-col gap-6 items-center justify-center">
+            <div className="absolute top-0 text-center w-screen px-4 py-2 bg-[rgba(0,0,0,0.3)]">
+                <p className="text-white font-semibold text-2xl">
+                    {state.score}
+                </p>
+            </div>
             <div className="text-center space-y-2">
                 <p className="text-white font-semibold text-4xl">{countdown}</p>
                 <div className="text-white h-[36px] font-semibold text-3xl uppercase tracking-wider flex items-center justify-center">
