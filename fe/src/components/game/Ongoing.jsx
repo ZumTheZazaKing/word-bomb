@@ -92,16 +92,15 @@ const Ongoing = (props) => {
                     {prompt ? prompt : <span className="animate-spin"><AiOutlineLoading3Quarters/></span>}
                 </div>
             </div>
-            <p className="w-screen bg-transparent font-semibold tracking-wide outline-none text-center text-white text-2xl uppercase">
+            <p className="w-screen bg-transparent font-semibold tracking-wide outline-none text-center text-white text-2xl uppercase line-clamp-1">
                 {getHighlightedText()}
-                <span className="animate-blink">&#9474;</span>
             </p>
-            <div>
+            <div className="absolute bottom-0 p-4 bg-[rgba(0,0,0,0.3)] w-screen text-center">
                 <input type="text"
                     ref={inputRef}
                     value={input}
                     onChange={e => handleInputChange(e)}
-                    className="h-0 w-0 bg-transparent font-semibold tracking-wide outline-none text-center text-white text-2xl"
+                    className="w-full bg-transparent tracking-wide outline-none text-center text-white text-2xl"
                 />
             </div>
         </div>
